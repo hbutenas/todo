@@ -2,10 +2,11 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
   public async register(body: RegisterDto) {
     // Check for already existing user
@@ -39,7 +40,7 @@ export class AuthService {
       throw new InternalServerErrorException('Something went wrong. please try again later...');
     }
 
-    // Return tokens
+    // Generate tokens
   }
 
   public async login() {}
