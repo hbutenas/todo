@@ -8,6 +8,7 @@ export class AccessTokenGuard extends AuthGuard('jwt') {
     super();
   }
 
+  // If the handler or class contains Public metadata, returns true and if it false, it will block everything
   canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride('isPublic', [context.getHandler(), context.getClass()]);
 
