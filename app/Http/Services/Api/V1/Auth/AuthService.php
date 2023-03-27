@@ -2,7 +2,50 @@
 
 namespace App\Http\Services\Api\V1\Auth;
 
+use App\Models\User;
+use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+
 class AuthService
 {
+    use HttpResponses;
 
+    public function register(object $request): object
+    {
+        // get user
+        $user = User::where('email', $request->email)->first();
+
+        // Request object should validate for unique users, but double check if user already exists
+        if ($user) {
+            return $this->failedRequest('', 'The email has already been taken', 400);
+        }
+
+        // create new user
+        $user = User::create([
+            'email' => strtolower($request->email),
+            'password' => Hash::make($request->password)
+        ]);
+
+        return $this->successfullRequest($user, 'User successfully created', 201);
+    }
+
+    public function login(object $request): object
+    {
+        // get user
+        $user = User::where('email', $request->email)->first();
+
+        // create token
+        $token = $user->createToken('Basic web token')->plainTextToken;
+
+        // encrypt token
+        $encryptedToken = Crypt::encryptString($token);
+
+        // create cookie
+        $cookie = Cookie::make('token', $encryptedToken, 60, null, null, false, true);
+
+        // return response
+        return $this->successfullRequest($user, 'User successfully logged in', 200)->withCookie($cookie);
+    }
 }
