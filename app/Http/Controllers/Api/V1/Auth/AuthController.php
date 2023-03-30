@@ -7,7 +7,6 @@ use App\Http\Requests\Api\V1\Auth\LoginUserRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterUserRequest;
 use App\Http\Services\Api\V1\Auth\AuthService;
 use App\Traits\HttpResponses;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -27,5 +26,10 @@ class AuthController extends Controller
         }
 
         return $authService->login($request);
+    }
+
+    public function identify(AuthService $authService): object
+    {
+        return $authService->identify(Auth::user());
     }
 }
