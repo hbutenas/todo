@@ -4,8 +4,6 @@ namespace App\Http\Services\Api\V1\Auth;
 
 use App\Models\User;
 use App\Traits\HttpResponses;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
