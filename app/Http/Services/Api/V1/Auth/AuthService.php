@@ -36,16 +36,15 @@ class AuthService
         // get user
         $user = User::where('email', $request->email)->first();
 
-        // create token
-        $token = $user->createToken('Basic web token')->plainTextToken;
-
-        // encrypt token
-        $encryptedToken = Crypt::encryptString($token);
-
-        // create cookie
-        $cookie = Cookie::make('token', $encryptedToken, 60, null, null, false, true);
-
         // return response
-        return $this->successfullRequest($user, 'User successfully logged in', 200)->withCookie($cookie);
+        return $this->successfullRequest([
+            'user' => $user,
+            'token' => $user->createToken('Basic web token')->plainTextToken
+        ], 'User successfully logged in', 200);
+    }
+
+    public function identify(object $user): object
+    {
+        return User::where('id', $user->id)->first();
     }
 }
