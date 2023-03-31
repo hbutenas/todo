@@ -10,7 +10,23 @@ class TodoService
 {
     use HttpResponses;
 
-    public function create(object $request): object
+    /*
+     * Create a new Todo item
+     *
+     * This function creates a new Todo item based on the data provided in the $request object.
+     * The user ID is retrieved from the Auth::user() function, and the title is capitalized
+     * using the ucfirst() function. The description is split into sentences using a regular
+     * expression, and each sentence is modified to capitalize the first letter of the first
+     * word using a foreach loop. The modified sentences are then joined back into a string.
+     * The Todo item is then created in the database using the Todo::create() function, and
+     * a success response is returned with the created Todo item and a message indicating
+     * that the Todo was successfully created.
+     *
+     * @param object $request The request object containing the Todo data.
+     *
+     * @return object A success response object with the created Todo item and a success message.
+     * */
+    public function store(object $request): object
     {
         // get user id
         $userId = Auth::user()->id;
