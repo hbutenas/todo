@@ -28,9 +28,6 @@ class TodoService
      * */
     public function store(object $request): object
     {
-        // get user id
-        $userId = Auth::user()->id;
-
         // make sure that title starts capitalized
         $title = ucfirst($request->title);
 
@@ -54,11 +51,125 @@ class TodoService
 
         // create todo
         $todo = Todo::create([
-            'user_id' => $userId,
+            'user_id' => Auth::user()->id,
             'title' => $title,
             'description' => $description,
         ]);
 
         return $this->successfullRequest($todo, 'Todo successfully created', 201);
+    }
+
+    /**
+     * Retrieve all Todo items for the authenticated user
+     *
+     * This function retrieves all the Todo items for the authenticated user based on their user ID.
+     * The user ID is retrieved from the Auth::user() function. The todos are then queried from the database
+     * using the Todo::where() function, which filters the results based on the user ID. The retrieved todos are
+     * returned in a success response object along with a message indicating if the request was successful and if any
+     * todos were retrieved. If no todos are retrieved, the message indicates that the user does not have any todos.
+     *
+     * @return object A success response object with the retrieved Todo items and a message indicating
+     * that the request was successful or that the user does not have any todos.
+     */
+    public function index(): object
+    {
+        // get todos
+        $todos = Todo::where('user_id', Auth::user()->id)->get();
+
+        $message = $todos->count() > 0 ? 'Request successful' : 'User does not have any todos';
+
+        return $this->successfullRequest($todos, $message, 200);
+    }
+
+    /**
+     * Retrieve a single Todo item by ID.
+     *
+     * This function retrieves a single Todo item with the specified ID and ensures
+     * that the Todo belongs to the currently authenticated user. The user ID is
+     * retrieved from the Auth::user() function. If the Todo item does not exist or
+     * does not belong to the user, a 404 error response is returned. Otherwise, the
+     * Todo item is returned in a success response object.
+     *
+     * @param int $todoId The ID of the Todo item to retrieve.
+     *
+     * @return object A success response object containing the retrieved Todo item.
+     *               If the Todo item does not exist or does not belong to the user,
+     *               a 404 error response object is returned instead.
+     */
+    public function show(int $todoId): object
+    {
+        // get todo by todo id and ensure that todo belongs to user
+        $todo = Todo::where('id', $todoId)->where('user_id', Auth::user()->id)->first();
+
+        // todo not found
+        if (!$todo) {
+            return $this->failedRequest('', "Todo with id $todoId does not found", 404);
+        }
+
+        return $todo;
+    }
+
+    /**
+     * Update a single Todo item by ID.
+     *
+     * This function updates a single Todo item with the specified ID and ensures
+     * that the Todo belongs to the currently authenticated user. The user ID is
+     * retrieved from the `Auth::user()` function. If the Todo item does not exist or
+     * does not belong to the user, a 404 error response is returned. Otherwise, the
+     * Todo item is updated and returned in a success response object.
+     *
+     * @param int $todoId The ID of the Todo item to update.
+     * @param object $request The request object containing the new values for the Todo item.
+     *
+     * @return object A success response object containing the updated Todo item.
+     *                If the Todo item does not exist or does not belong to the user,
+     *                a 404 error response object is returned instead.
+     */
+    public function update(int $todoId, object $request): object
+    {
+        // get todo by todo id and ensure that todo belongs to user
+        $todo = Todo::where('id', $todoId)->where('user_id', Auth::user()->id)->first();
+
+        // todo not found
+        if (!$todo) {
+            return $this->failedRequest('', "Todo with id $todoId does not found", 404);
+        }
+
+        // update todo
+        Todo::where('id', $todoId)->where('user_id', Auth::user()->id)->update([
+            'title' => $request->title ? $request->title : $todo->title,
+            'description' => $request->description ? $request->description : $todo->description,
+            'status' => $request->status ? $request->status : $todo->status
+        ]);
+
+        return $this->successfullRequest(Todo::find($todoId), 'Todo successfully updated', 200);
+    }
+
+    /**
+     *
+     * Delete a Todo item by ID.
+     * This function retrieves a Todo item by its ID and ensures that it belongs to the currently authenticated user.
+     * If the Todo item is not found or does not belong to the user, a 404 error response is returned.
+     * Otherwise, the Todo item is deleted from the database and a success response object is returned.
+     *
+     * @param int $todoId The ID of the Todo item to be deleted.
+     *
+     * @return object A success response object indicating that the Todo item has been deleted,
+     * or a failed response object with an error message and status code.
+     */
+    public function destroy(int $todoId): object
+    {
+        // get todo by todo id and ensure that todo belongs to user
+        $todo = Todo::where('id', $todoId)->where('user_id', Auth::user()->id)->first();
+
+        // todo not found
+        if (!$todo) {
+            return $this->failedRequest('', "Todo with id $todoId does not found", 404);
+        }
+
+        // delete todo
+        Todo::where('id', $todoId)->where('user_id', Auth::user()->id)->delete();
+
+        return $this->successfullRequest('', 'Todo successfully deleted', 200);
     }
 }
