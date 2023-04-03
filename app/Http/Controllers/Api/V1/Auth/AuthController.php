@@ -28,8 +28,8 @@ class AuthController extends Controller
         return $authService->login($request);
     }
 
-    public function identify(AuthService $authService): object
+    public function profile(AuthService $authService): object
     {
-        return $authService->identify(Auth::user());
+        return $authService->profile(Auth::user());
     }
 }

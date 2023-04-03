@@ -41,8 +41,23 @@ class AuthService
         ], 'User successfully logged in', 200);
     }
 
-    public function identify(object $user): object
+    public function profile(object $user): object
     {
-        return User::where('id', $user->id)->first();
+        return User::where('id', $user->id)
+            ->withCount([
+                'todos as pending_todos_count' => function ($query) {
+                    $query->where('status', 'pending');
+                },
+                'todos as in_progress_todos_count' => function ($query) {
+                    $query->where('status', 'in_progress');
+                },
+                'todos as completed_todos_count' => function ($query) {
+                    $query->where('status', 'completed');
+                },
+                'todos as cancelled_todos_count' => function ($query) {
+                    $query->where('status', 'cancelled');
+                },
+                'todos'
+            ])->first();
     }
 }

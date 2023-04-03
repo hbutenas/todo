@@ -11,5 +11,5 @@ Route::group(['prefix' => 'v1/auth'], function () {
 
 // private routes
 Route::group(['prefix' => 'v1/auth', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('identify', [AuthController::class, 'identify']);
+    Route::get('profile', [AuthController::class, 'profile']);
 });
