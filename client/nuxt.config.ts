@@ -3,6 +3,10 @@ export default defineNuxtConfig({
     modules: [
         '@nuxtjs/tailwindcss',
     ],
+    components: [
+        '~/components',
+        '~/components/auth',
+    ],
     app: {
         head: {
             script: [
