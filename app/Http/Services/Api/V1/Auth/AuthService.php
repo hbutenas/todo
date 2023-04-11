@@ -26,7 +26,10 @@ class AuthService
             'password' => Hash::make($request->password)
         ]);
 
-        return $this->successfullRequest($user, 'User successfully created', 201);
+        return $this->successfullRequest([
+            'user' => $user,
+            'token' => $user->createToken('Basic web token')->plainTextToken
+        ], 'User successfully created', 201);
     }
 
     public function login(object $request): object
