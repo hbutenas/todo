@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     components: [
         '~/components',
         '~/components/auth',
+        '~/components/dashboard'
     ],
     app: {
         head: {
