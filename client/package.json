@@ -10,6 +10,6 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.6.5",
-    "nuxt": "^3.3.3"
+    "nuxt": "^3.4.0"
   }
 }
