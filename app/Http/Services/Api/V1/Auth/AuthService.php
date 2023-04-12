@@ -67,6 +67,8 @@ class AuthService
     public function logout(object $user): object
     {
         // delete all tokens
-        return $user->tokens()->delete();
+        $user->tokens()->delete();
+
+        return $this->successfullRequest('', 'User successfully logged out', 200);
     }
 }
