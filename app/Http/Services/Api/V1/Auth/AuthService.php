@@ -63,4 +63,10 @@ class AuthService
                 'todos'
             ])->first();
     }
+
+    public function logout(object $user): object
+    {
+        // delete all tokens
+        return $user->tokens()->delete();
+    }
 }

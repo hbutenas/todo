@@ -32,4 +32,9 @@ class AuthController extends Controller
     {
         return $authService->profile(Auth::user());
     }
+
+    public function logout(AuthService $authService): object
+    {
+        return $authService->logout(Auth::user());
+    }
 }
